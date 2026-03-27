@@ -1,0 +1,14 @@
+# Bỏ qua file Database cục bộ
+db.sqlite3
+
+# Bỏ qua các file rác của Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Bỏ qua thư mục môi trường ảo (nếu có)
+venv/
+env/
+
+# Bỏ qua thư mục chứa ảnh upload (sau này dùng)
+media/

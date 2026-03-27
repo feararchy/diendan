@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ topic.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container"><a class="navbar-brand fw-bold" href="/">💻 Về Trang Chủ</a></div>
+    </nav>
+    <div class="container">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="card-title text-primary fw-bold">{{ topic.title }}</h2>
+                <h6 class="card-subtitle mb-3 text-muted">Đăng bởi {{ topic.author.username }} | {{ topic.created_at|date:"d/m/Y H:i" }} | Mục: {{ topic.category.name }}</h6>
+                <hr>
+                <p class="card-text fs-5" style="white-space: pre-line;">{{ topic.content }}</p>
+            </div>
+        </div>
+        
+        <h4 class="mb-3">💬 Bình luận ({{ topic.comments.count }})</h4>
+        {% for comment in topic.comments.all %}
+        <div class="card mb-2">
+            <div class="card-body py-2">
+                <strong class="text-success">{{ comment.author.username }}</strong> <small class="text-muted">({{ comment.created_at|date:"d/m/Y H:i" }}):</small>
+                <p class="mb-0 mt-1">{{ comment.content }}</p>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="mt-4 mb-5">
+            {% if user.is_authenticated %}
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Viết bình luận của bạn:</label>
+                    <textarea name="content" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Gửi Bình Luận</button>
+            </form>
+            {% else %}
+            <div class="alert alert-info">Vui lòng <a href="/admin">Đăng nhập</a> để tham gia bình luận.</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
