@@ -15,7 +15,7 @@ Dự án diễn đàn công nghệ mã nguồn mở được xây dựng bằng 
 - **Giao diện:** Bootstrap 5, Javascript
 
 ## 🚀 Hướng dẫn cài đặt
-1. Clone dự án: `git clone <link-cua-ban>`
+1. Clone dự án: `git clone https://github.com/feararchy/diendan.git`
 2. Cài đặt thư viện: `pip install -r requirements.txt`
 3. Cấu hình database PostgreSQL trong `settings.py`
 4. Chạy lệnh: `python manage.py migrate`
