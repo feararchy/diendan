@@ -11,7 +11,13 @@ class Topic(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Tác giả")
     title = models.CharField(max_length=255, verbose_name="Tiêu đề")
     content = models.TextField(verbose_name="Nội dung bài viết")
+    image = models.ImageField(upload_to='topics/', null=True, blank=True, verbose_name="Ảnh đính kèm") 
+    likes = models.ManyToManyField(User, related_name='liked_topics', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    def total_likes(self):
+        return self.likes.count()
+
     def __str__(self): return self.title
 
 class Comment(models.Model):

@@ -13,9 +13,56 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h2 class="card-title text-primary fw-bold">{{ topic.title }}</h2>
-                <h6 class="card-subtitle mb-3 text-muted">Đăng bởi {{ topic.author.username }} | {{ topic.created_at|date:"d/m/Y H:i" }} | Mục: {{ topic.category.name }}</h6>
+                <h6 class="card-subtitle mb-3 text-muted">Đăng bởi <b>{{ topic.author.username }}</b> | {{ topic.created_at|date:"d/m/Y H:i" }} | Mục: <span class="badge bg-secondary">{{ topic.category.name }}</span></h6>
                 <hr>
-                <p class="card-text fs-5" style="white-space: pre-line;">{{ topic.content }}</p>
+                
+                <!-- SỬA 1: Dùng |safe để hiển thị định dạng của CKEditor, thẻ div thay cho p để tránh lỗi HTML -->
+                <div class="card-text fs-5 mb-3">{{ topic.content|safe }}</div>
+                
+                <!-- SỬA 2: Hiển thị Ảnh đính kèm (nếu bài viết đó có ảnh) -->
+                {% if topic.image %}
+                    <div class="text-center mb-4">
+                        <img src="{{ topic.image.url }}" class="img-fluid rounded shadow-sm" style="max-height: 500px;" alt="Ảnh đính kèm">
+                    </div>
+                {% endif %}
+                
+                <hr>
+                <!-- SỬA 3: Khu vực Nút Like và Nút Xóa bài -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Nút Thả tim -->
+                    <form action="{% url 'like_topic' topic.id %}" method="POST" class="m-0">
+                        {% csrf_token %}
+                        {% if user.is_authenticated %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm fw-bold">
+                                ❤️ {{ topic.total_likes }} Thích
+                            </button>
+                        {% else %}
+                            <span class="btn btn-outline-secondary btn-sm fw-bold">❤️ {{ topic.total_likes }} Thích</span>
+                        {% endif %}
+                    </form>
+
+                    <!-- Menu 3 chấm (Chỉ hiện cho Tác giả hoặc Admin) -->
+                    {% if user == topic.author or user.is_staff %}
+                    <div class="dropdown">
+                        <button class="btn btn-light btn-sm border fw-bold px-3 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            ⋮ Tùy chọn
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li>
+                                <a class="dropdown-item text-primary" href="{% url 'edit_topic' topic.id %}">
+                                    ✏️ Chỉnh sửa bài viết
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'delete_topic' topic.id %}" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">
+                                    🗑️ Xóa bài viết
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
         
@@ -27,6 +74,8 @@
                 <p class="mb-0 mt-1">{{ comment.content }}</p>
             </div>
         </div>
+        {% empty %}
+        <p class="text-muted fst-italic">Chưa có bình luận nào. Hãy là người đầu tiên thảo luận!</p>
         {% endfor %}
 
         <div class="mt-4 mb-5">
@@ -35,14 +84,17 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     <label class="form-label fw-bold">Viết bình luận của bạn:</label>
-                    <textarea name="content" class="form-control" rows="3" required></textarea>
+                    <textarea name="content" class="form-control" rows="3" required placeholder="Nhập bình luận..."></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Gửi Bình Luận</button>
+                <button type="submit" class="btn btn-primary fw-bold">Gửi Bình Luận</button>
             </form>
             {% else %}
-            <div class="alert alert-info">Vui lòng <a href="/admin">Đăng nhập</a> để tham gia bình luận.</div>
+            <!-- Cập nhật link đăng nhập cho Khách -->
+            <div class="alert alert-info">Vui lòng <a href="{% url 'login' %}" class="alert-link">Đăng nhập</a> để tham gia bình luận.</div>
             {% endif %}
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </body>
 </html>
